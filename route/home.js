@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
 const RemoteTerminal = () => import("../components/RemoteTerminal/RemoteTerminal.vue");
-const PluginManager = () => import("../components/PluginManager/PluginManager.vue");
 
 const routes = [
     {
@@ -13,7 +12,7 @@ const routes = [
     },
     {
         path: "/pluginManager",
-        component: PluginManager,
+        component: `<h1>123</h1>`,
     },
 ];
 
