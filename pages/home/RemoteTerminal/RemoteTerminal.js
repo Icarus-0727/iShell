@@ -1,6 +1,6 @@
 import {} from "vue";
 import { ManagedSolutions as connIcon } from "@vicons/carbon";
-import Terminal from "../../../components/RemoteTerminal/Terminal.vue";
+import Terminal from "../../../components/Terminal/Terminal.vue";
 import { NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NLayoutFooter, NTabs, NTabPane, NDataTable, NCard, NButton, NIcon, NTooltip } from "naive-ui";
 
 let connNum = 0;
