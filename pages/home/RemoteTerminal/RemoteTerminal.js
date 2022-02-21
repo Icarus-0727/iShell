@@ -1,6 +1,6 @@
 import {} from "vue";
 import { ManagedSolutions as connIcon } from "@vicons/carbon";
-import Terminal from "./Terminal.vue";
+import Terminal from "../../../components/RemoteTerminal/Terminal.vue";
 import { NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NLayoutFooter, NTabs, NTabPane, NDataTable, NCard, NButton, NIcon, NTooltip } from "naive-ui";
 
 let connNum = 0;
@@ -59,9 +59,7 @@ export default {
   },
   methods: {
     openConnMgr() {
-      window.openConnMgr()
       // const connMgr = window.open("http://localhost:4000/pages/connection-manager/index.html", "connection-manager");
-
       // const onMessage = (msg) => {
       //   let machine = JSON.parse(msg.data);
       //   this.conns.push({
@@ -71,9 +69,7 @@ export default {
       //   });
       //   connMgr.close();
       // };
-
       // window.addEventListener("message", onMessage);
-
       // let connMgrOnClose = setInterval(() => {
       //   if (connMgr.closed) {
       //     window.removeEventListener("message", onMessage);
