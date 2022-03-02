@@ -1,18 +1,13 @@
-import { h } from "vue";
-import { RouterLink } from "vue-router";
 import { Terminal as RemoteTerminalIcon, Apps as PluginManagerIcon, Settings as SettingIcon } from "@vicons/tabler";
 import { NLayout, NLayoutSider, NLayoutContent, NLayoutFooter, NIcon, NButton, NMenu, NTooltip } from "naive-ui";
+import { renderIcon, renderRouter } from "./func";
+import { KeepAlive } from "vue";
 
-function renderIcon(icon) {
-  return () => h(NIcon, null, { default: () => h(icon) });
-}
-function renderRouter(label, path) {
-  return () => h(RouterLink, { to: { path: path } }, { default: () => label });
-}
-
+const { ipcRenderer } = require("electron");
 export default {
   data() {
     return {
+      contentHeight: window.innerHeight,
       menuOptions: [
         {
           label: renderRouter("远程终端", "/remoteTerminal"),
@@ -29,8 +24,19 @@ export default {
   },
   methods: {
     openSettings() {
-      const connMgr = window.open("/pages/settings/index.html", "settings");
+      // window.open("/pages/settings/index.html", "settings");
+      // ipcRenderer.on("connMgr", (event, args) => {
+      //   console.log(args)
+      // })
     },
+  },
+  setup() {
+    ipcRenderer.send("registry", "home")
+  },
+  mounted() {
+    window.onresize = () => {
+      this.contentHeight = window.innerHeight;
+    };
   },
   components: {
     NLayout,
@@ -42,5 +48,6 @@ export default {
     NMenu,
     NTooltip,
     SettingIcon,
+    KeepAlive,
   },
 };

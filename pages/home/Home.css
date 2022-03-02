@@ -1,0 +1,27 @@
+html,
+body,
+#app {
+  height: 100%;
+  width: 100%;
+}
+#terminal > div {
+  height: 100%;
+}
+
+#container {
+  width: 100%;
+  height: 100%;
+}
+
+#sider-menu {
+  background-color: #fafafc;
+}
+
+#sider-footer {
+  bottom: 10px;
+}
+
+#btn-setting {
+  font-size: 30px;
+  padding: 5px 10px;
+}

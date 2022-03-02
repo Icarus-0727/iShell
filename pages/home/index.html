@@ -11,9 +11,9 @@
   </body>
   <script type="module">
     import { createApp } from "vue";
-    import App from "./App.vue";
-    import router from "../../route/home.js";
+    import Home from "./Home.vue";
+    import router from "@route/homeRouter.js";
 
-    createApp(App).use(router).mount("#app");
+    createApp(Home).use(router).mount("#app");
   </script>
 </html>

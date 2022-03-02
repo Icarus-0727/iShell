@@ -1,27 +1,21 @@
 <template>
   <NLayout id="container" has-sider>
-    <NLayoutSider
-      bordered
-      collapsed
-      collapse-mode="width"
-      :collapsed-width="50"
-    >
+    <NLayoutSider bordered collapsed collapse-mode="width" :collapsed-width="50">
       <NLayout embedded position="absolute">
-        <NLayoutContent>
+        <NLayoutContent id="sider-menu">
           <NMenu
             collapsed
             :collapsed-width="50"
             :collapsed-icon-size="30"
             :options="menuOptions"
             default-value="terminal"
-            style="background-color: #fafafc;"
           />
         </NLayoutContent>
-        <NLayoutFooter position="absolute" style="bottom: 0px">
+        <NLayoutFooter id="sider-footer" position="absolute">
           <!-- 设置 -->
           <NTooltip trigger="hover" placement="right">
             <template #trigger>
-              <NButton text style="font-size: 30px; padding: 5px 10px;" @click="openSettings">
+              <NButton id="btn-setting" text @click="openSettings">
                 <NIcon>
                   <SettingIcon />
                 </NIcon>
@@ -32,11 +26,17 @@
         </NLayoutFooter>
       </NLayout>
     </NLayoutSider>
-    <NLayoutContent content-style="overflow: hidden;">
-      <router-view></router-view>
+    <NLayoutContent :content-style="`overflow: hidden; height: ${contentHeight}px;`">
+      <RouterView v-slot="{ Component }">
+        <transition>
+          <KeepAlive>
+            <component :is="Component" />
+          </KeepAlive>
+        </transition>
+      </RouterView>
     </NLayoutContent>
   </NLayout>
 </template>
 
-<script src="./index.js"></script>
-<style src="./index.css"></style>
+<script src="./Home.js"></script>
+<style src="./Home.css"></style>
