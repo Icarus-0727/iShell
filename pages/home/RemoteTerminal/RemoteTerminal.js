@@ -1,7 +1,9 @@
-import {} from "vue";
-import { ManagedSolutions as connIcon } from "@vicons/carbon";
+import { h, KeepAlive } from "vue";
+import { NLayout, NLayoutFooter, NTabs, NTabPane, NDataTable, NCard, NButton, NIcon } from "naive-ui";
+import { PlugDisconnected20Regular as ConnIcon } from "@vicons/fluent";
+
 import Terminal from "../../../components/Terminal/Terminal.vue";
-import { NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NLayoutFooter, NTabs, NTabPane, NDataTable, NCard, NButton, NIcon, NTooltip } from "naive-ui";
+const { ipcRenderer } = require("electron");
 
 let connNum = 0;
 
@@ -31,10 +33,33 @@ export default {
             tooltip: true,
           },
         },
+        {
+          title: "操作",
+          align: "center",
+          render: (row) => [
+            h(
+              NButton,
+              {
+                quaternary: true,
+                size: "small",
+                onClick: () => {
+                  let conn = this.conns.find((e) => {
+                    return e.id == this.currentTab;
+                  });
+                  conn.id = row.ID;
+                  conn.isNew = false;
+                  conn.name = row.name;
+                  this.currentTab = row.ID;
+                },
+              },
+              { default: renderIcon(ConnIcon) }
+            ),
+          ],
+        },
       ],
       pluginBar: {
         bottom: {
-          height: 300,
+          height: 400,
         },
       },
       currentTab: 0,
@@ -44,38 +69,17 @@ export default {
           isNew: true,
           name: "新建连接",
         },
+        // {
+        //   id: 1,
+        //   isNew: false,
+        //   name: "腾讯云",
+        // },
       ],
     };
   },
-  setup(props) {
-    fetch("http://localhost:32123/machine/recently").then((resp) => {
-      resp.json().then((json) => {
-        recentlyUsed.value = json.data;
-        recentlyUsed.value.forEach((item) => {
-          item.CreatedAt = item.CreatedAt.substring(0, 19).replace("T", " ");
-        });
-      });
-    });
-  },
   methods: {
     openConnMgr() {
-      // const connMgr = window.open("http://localhost:4000/pages/connection-manager/index.html", "connection-manager");
-      // const onMessage = (msg) => {
-      //   let machine = JSON.parse(msg.data);
-      //   this.conns.push({
-      //     id: machine.ID,
-      //     isNew: false,
-      //     name: machine.name,
-      //   });
-      //   connMgr.close();
-      // };
-      // window.addEventListener("message", onMessage);
-      // let connMgrOnClose = setInterval(() => {
-      //   if (connMgr.closed) {
-      //     window.removeEventListener("message", onMessage);
-      //     clearInterval(connMgrOnClose);
-      //   }
-      // }, 5000);
+      window.open("/pages/connMgr/index.html", "connMgr");
     },
     addTab() {
       let id = connNum--;
@@ -104,5 +108,41 @@ export default {
       }
     },
   },
-  components: { NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NLayoutFooter, NTabs, NTabPane, NDataTable, NCard, NButton, NIcon, NTooltip, connIcon, Terminal },
+  mounted() {
+    fetch("http://localhost:32123/machine/recently").then((resp) => {
+      resp.json().then((json) => {
+        console.log(json.data);
+        this.recentlyUsed = json.data;
+        this.recentlyUsed.forEach((item) => {
+          item.CreatedAt = item.CreatedAt.substring(0, 19).replace("T", " ");
+        });
+      });
+    });
+    
+    let that = this;
+    ipcRenderer.on("connMgr", (_, args) => {
+      console.log(args);
+      const machine = JSON.parse(args);
+      let item = that.conns.find((e) => {
+        return e.isNew;
+      });
+      if (item != undefined) {
+        item.id = machine.ID;
+        item.isNew = false;
+        item.name = machine.name;
+      } else {
+        that.conns.push({
+          id: machine.ID,
+          isNew: false,
+          name: machine.name,
+        });
+      }
+      this.currentTab = machine.ID;
+    });
+  },
+  components: { NLayout, NLayoutFooter, NTabs, NTabPane, NDataTable, NCard, NButton, NIcon, Terminal, KeepAlive },
 };
+
+function renderIcon(icon) {
+  return () => h(NIcon, null, { default: () => h(icon) });
+}

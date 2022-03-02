@@ -1,84 +1,63 @@
 <template>
-  <n-tabs
+  <NTabs
     addable
     closable
-    pane-style="padding: 0; width: 100%; height: calc(100% - 35px);"
+    pane-style="padding: 0;"
     size="small"
     style="height: 100%;"
     type="card"
     v-model:value="currentTab"
     @add="addTab"
     @close="closeTab"
+    n
   >
-    <template #prefix>
-      <n-tooltip trigger="hover">
-        <template #trigger>
-          <n-button @click="openConnMgr" quaternary style="font-size: 16px;">
-            <n-icon>
-              <connIcon />
-            </n-icon>
-          </n-button>
-        </template>
-        连接管理器
-      </n-tooltip>
-    </template>
-    <n-tab-pane v-for="(conn, index) in conns" :name="conn.id" :tab="(index + 1) + ' ' + conn.name">
-      <template v-if="conn.isNew">
-        <div style="padding: 20px;">
-          <n-card title="最近使用连接">
-            <n-data-table
-              :bordered="false"
-              :bottom-bordered="false"
-              :columns="cols"
-              :data="recentlyUsed"
-              size="small"
-              single-column
-            />
-          </n-card>
-        </div>
-        <div style="padding: 20px;">
-          <n-card title="常用连接">
-            <n-data-table
-              :bordered="false"
-              :bottom-bordered="false"
-              :columns="cols"
-              :data="recentlyUsed"
-              size="small"
-              single-column
-            />
-          </n-card>
-        </div>
-      </template>
+    <NTabPane
+      v-for="(conn, index) in conns"
+      :name="conn.id"
+      :tab="`${index + 1} ${conn.name}`"
+      display-directive="show"
+    >
+      <div style="padding: 20px;" v-if="conn.isNew">
+        <NCard>
+          <template #header>
+            最近使用连接
+            <div style="float: right">
+              <NButton type="success" @click="openConnMgr">连接管理器</NButton>
+            </div>
+          </template>
+          <NDataTable
+            :bordered="false"
+            :bottom-bordered="false"
+            :columns="cols"
+            :data="recentlyUsed"
+            size="small"
+            single-column
+          />
+        </NCard>
+      </div>
       <template v-else>
-        <n-layout style="height: 100%">
+        <NLayout style="height: 100%">
           <Terminal :id="conn.id" />
-          <n-layout-footer :style="`height: ${pluginBar.bottom.height}px;`">
-            <n-tabs
+          <NLayoutFooter :style="`height: ${pluginBar.bottom.height}px;`">
+            <NTabs
               type="line"
               size="small"
               style="height: 100%;"
-              pane-style="height: calc(100% - 44px); padding-top: 5px;"
+              pane-style="height: calc(100% - 200px); padding-top: 5px;"
             >
-              <n-tab-pane name="sysinfo" tab="资源信息" display-directive="show:lazy">
+              <NTabPane name="sysinfo" tab="资源信息" display-directive="show">
                 <iframe
-                  :src="`/pages/system-info/index.html?machine_id=${conn.id}`"
+                  :src="`http://localhost:32123/plugin/sysinfo/index.html?machine_id=${conn.id}`"
                   frameborder="1"
-                  style="width: calc(100% - 7px); height: 100%;"
+                  style="width: calc(100% - 5px); height: 100%;"
                 ></iframe>
-              </n-tab-pane>
-              <n-tab-pane name="files" tab="文件浏览器" display-directive="show:lazy">
-                <iframe
-                  :src="`/pages/file-explorer/index.html?machine_id=${conn.id}`"
-                  frameborder="1"
-                  style="width: calc(100% - 7px); height: 100%;"
-                ></iframe>
-              </n-tab-pane>
-            </n-tabs>
-          </n-layout-footer>
-        </n-layout>
+              </NTabPane>
+            </NTabs>
+          </NLayoutFooter>
+        </NLayout>
       </template>
-    </n-tab-pane>
-  </n-tabs>
+    </NTabPane>
+  </NTabs>
 </template>
 
-<script src="./RemoteTerminal.js"></script>
+<script src="./RemoteTerminal"></script>
