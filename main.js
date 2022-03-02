@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, Tray } = require("electron");
+const ipcRegister = require("./ipc/main");
 const Home = require("./windows/home");
 
 let tray = null;
@@ -6,6 +7,8 @@ let tray = null;
 app.commandLine.appendSwitch("--disable-http-cache");
 
 app.whenReady().then(() => {
+  ipcRegister();
+
   const homeWin = new Home();
 
   const trayMenu = Menu.buildFromTemplate([
