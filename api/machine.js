@@ -1,4 +1,4 @@
-const baseurl = "/machine/";
+const baseurl = "http://localhost:32123/machine/";
 
 const getMachines = () =>
   new Promise((resolve, reject) =>

@@ -1,5 +1,5 @@
 import { h } from "vue";
-import { NLayout, NLayoutHeader, NLayoutContent, NGrid, NGi, NDataTable, NButton, NIcon, NInputGroup, NInput, NSelect } from "naive-ui";
+import { NLayout, NLayoutHeader, NLayoutContent, NGrid, NGi, NDataTable, NButton, NIcon, NInputGroup, NInput, NSelect, NPopconfirm } from "naive-ui";
 import { NewTab as NewConnIcon, Settings as SettingIcon, Delete as DeleteIcon } from "@vicons/carbon";
 import { PlugDisconnected20Regular as ConnIcon } from "@vicons/fluent";
 import { getMachines, deleteMachine } from "../../api/machine";
@@ -19,11 +19,13 @@ export default {
     NInputGroup,
     NInput,
     NSelect,
+    NPopconfirm,
     NewConnIcon,
     ConnIcon,
   },
   data() {
     return {
+      dialog: null,
       loading: true,
       machines: [],
       tableMaxHeigth: 0,
@@ -47,7 +49,6 @@ export default {
           title: "名称",
           key: "name",
           width: 150,
-          // align: 'center',
           ellipsis: {
             tooltip: true,
           },
@@ -56,7 +57,6 @@ export default {
           title: "地址",
           key: "host",
           width: 120,
-          // align: 'center',
         },
         {
           title: "端口",
@@ -76,7 +76,6 @@ export default {
         {
           title: "描述",
           key: "description",
-          // align: 'center',
           ellipsis: {
             tooltip: true,
           },
@@ -90,7 +89,11 @@ export default {
           render: (row) => [
             h(NButton, { quaternary: true, size: "small", onClick: () => openSshConn(row) }, { default: renderIcon(ConnIcon) }),
             h(NButton, { quaternary: true, size: "small", onClick: () => this.openConnEditor(row.ID) }, { default: renderIcon(SettingIcon) }),
-            h(NButton, { quaternary: true, size: "small", onClick: () => this.deleteMachine(row.ID) }, { default: renderIcon(DeleteIcon) }),
+            h(
+              NPopconfirm,
+              { positiveText: "确定", negativeText: "取消", onPositiveClick: () => this.deleteMachine(row.ID) },
+              { trigger: () => h(NButton, { quaternary: true, size: "small" }, { default: renderIcon(DeleteIcon) }), default: () => "请确认是否删除此连接？" }
+            ),
           ],
         },
       ],
@@ -109,9 +112,7 @@ export default {
         .finally(() => (this.loading = false));
     },
     deleteMachine(id) {
-      deleteMachine(id).then(() => {
-        this.getMachines();
-      });
+      deleteMachine(id).then(this.getMachines);
     },
   },
   mounted() {
